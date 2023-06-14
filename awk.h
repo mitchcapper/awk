@@ -30,7 +30,38 @@ THIS SOFTWARE.
 #else
 #include <stdnoreturn.h>
 #endif
+#ifdef _WIN32
+#ifndef WIFEXITED
+#define WIFEXITED(w)    (((w) & 0xff) == 0)
+#endif
+#ifndef WIFSIGNALED
+#define WIFSIGNALED(w)  (((w) & 0x7f) > 0 && (((w) & 0x7f) < 0x7f))
+#endif
+#ifndef WIFSTOPPED
+#define WIFSTOPPED(w)   (((w) & 0xff) == 0x7f)
+#endif
+#ifndef WEXITSTATUS
+#define WEXITSTATUS(w)  (((w) >> 8) & 0xff)
+#endif
+#ifndef WTERMSIG
+#define WTERMSIG(w)     ((w) & 0x7f)
+#endif
+#ifndef WSTOPSIG
+#define WSTOPSIG        WEXITSTATUS
+#endif
 
+
+/* The termination signal. Only to be accessed if WIFSIGNALED(x) is true.  */
+# ifndef WTERMSIG
+#  define WTERMSIG(x) ((x) & 0x7f)
+# endif
+#define popen _popen
+#define pclose _pclose
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#define srandom srand
+#define random rand
+#endif
 typedef double	Awkfloat;
 
 /* unsigned char is more trouble than it's worth */
