@@ -36,7 +36,9 @@ THIS SOFTWARE.
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <sys/wait.h>
+#endif
 #include "awk.h"
 #include "awkgram.tab.h"
 
