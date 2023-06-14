@@ -131,12 +131,19 @@ extern	Cell	*fieldadr(int);
 extern	void	yyerror(const char *);
 extern	void	bracecheck(void);
 extern	void	bcheck2(int, int, int);
+# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7) || defined __clang__
+#	define WGET_GCC_PRINTF_FORMAT(a, b) __attribute__ ((format (printf, a, b)))
+#	define WGET_GCC_UNUSED __attribute__ ((unused))
+#else
+#	define WGET_GCC_PRINTF_FORMAT(a, b)
+#	define WGET_GCC_UNUSED
+#endif
 extern	void	SYNTAX(const char *, ...)
-    __attribute__((__format__(__printf__, 1, 2)));
+    WGET_GCC_PRINTF_FORMAT(1, 2);
 extern	noreturn void	FATAL(const char *, ...)
-    __attribute__((__format__(__printf__, 1, 2)));
+    WGET_GCC_PRINTF_FORMAT(1, 2);
 extern	void	WARNING(const char *, ...)
-    __attribute__((__format__(__printf__, 1, 2)));
+    WGET_GCC_PRINTF_FORMAT(1, 2);
 extern	void	error(void);
 extern	void	eprint(void);
 extern	void	bclass(int);
