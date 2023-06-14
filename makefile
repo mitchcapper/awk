@@ -39,6 +39,7 @@ CC = $(HOSTCC)  # change this is cross-compiling.
 # If you want something else, you're on your own.
 # YACC = yacc -d -b awkgram
 YACC = bison -d
+PREFIX := /usr/bin
 
 OFILES = b.o main.o parse.o proctab.o tran.o lib.o run.o lex.o
 
@@ -51,8 +52,8 @@ LISTING = awk.h proto.h awkgram.y lex.c b.c main.c maketab.c parse.c \
 SHIP = README LICENSE FIXES $(SOURCE) awkgram.tab.[ch].bak makefile  \
 	 awk.1
 
-a.out:	awkgram.tab.o $(OFILES)
-	$(CC) $(CFLAGS) awkgram.tab.o $(OFILES) $(ALLOC)  -lm
+awk:	awkgram.tab.o $(OFILES)
+	$(CC) -o awk $(CFLAGS) awkgram.tab.o $(OFILES) $(ALLOC)
 
 $(OFILES):	awk.h awkgram.tab.h proto.h
 
@@ -98,10 +99,15 @@ test check:
 	./REGRESS
 
 clean: testclean
-	rm -f a.out *.o *.obj maketab maketab.exe *.bb *.bbg *.da *.gcov *.gcno *.gcda # proctab.c
+	rm -f a.out awk awk.exe *.o *.obj maketab maketab.exe *.bb *.bbg *.da *.gcov *.gcno *.gcda # proctab.c
 
 cleaner: testclean
-	rm -f a.out *.o *.obj maketab maketab.exe *.bb *.bbg *.da *.gcov *.gcno *.gcda proctab.c awkgram.tab.*
+	rm -f a.out awk awk.exe *.o *.obj maketab maketab.exe *.bb *.bbg *.da *.gcov *.gcno *.gcda proctab.c awkgram.tab.*
+
+.PHONY: install
+
+install: awk
+	install -m 557 -D -t "$(PREFIX)/bin" awk.exe
 
 # This is a bit of a band-aid until we can invest some more time
 # in the test suite.
