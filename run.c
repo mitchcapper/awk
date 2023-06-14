@@ -2294,6 +2294,7 @@ FILE *openfile(int a, const char *us, bool *pnewflag)
 				return NULL;
 
 	m = a;
+#ifndef _WIN32
 	if (a == GT) {
 		fp = fopen(s, "w");
 	} else if (a == APPEND) {
@@ -2316,6 +2317,28 @@ FILE *openfile(int a, const char *us, bool *pnewflag)
 		if (fp != stdin && fp != stdout && fp != stderr)
 			(void) fcntl(fileno(fp), F_SETFD, FD_CLOEXEC);
 	}
+#else
+if (a == GT) {
+		fp = fopen(s, "wbN");
+	} else if (a == APPEND) {
+		fp = fopen(s, "abN");
+		m = GT;	/* so can mix > and >> */
+	} else if (a == '|') {	/* output pipe */
+		fp = popen(s, "wbN");
+	} else if (a == LE) {	/* input pipe */
+		fp = popen(s, "rbN");
+	} else if (a == LT) {	/* getline <file */
+		fp = strcmp(s, "-") == 0 ? stdin : fopen(s, "rbN");	/* "-" is stdin */
+	} else	/* can't happen */
+		FATAL("illegal redirection %d", a);
+	if (fp != NULL) {
+		files[i].fname = tostring(s);
+		files[i].fp = fp;
+		files[i].mode = m;
+		if (pnewflag)
+			*pnewflag = true;
+	}
+#endif	
 	return fp;
 }
 
