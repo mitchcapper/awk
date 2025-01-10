@@ -38,6 +38,10 @@ THIS SOFTWARE.
 #include <sys/stat.h>
 #ifndef _WIN32
 #include <sys/wait.h>
+#else
+// we do have these in gnulib but don't want to add gnulib just for this to awk
+#define S_IFLNK  0x0800 // symbolic link / junction point
+#define S_ISDIR(m) (((m) & (S_IFMT ^ S_IFLNK)) == S_IFDIR)
 #endif
 #include "awk.h"
 #include "awkgram.tab.h"
